@@ -15,20 +15,34 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class Server implements Store{
 	
+	//Counters
+	private int searchCount = 0, lookupCount = 0, buyCount = 0;
+	//Timers
+	private int searchTime = 0, lookupTime = 0, buyTime = 0;
+	
 	public Server() {}
 	
 	
 	public String search(String topic) {
+		long beginTime = System.currentTimeMillis();
+		long endTime = System.currentTimeMillis();
+		searchTime += (endTime - beginTime);
 		return "you searched for topic: " + topic;
 	}
 	
 	
 	public String lookup(int itemNumber) {
+		long beginTime = System.currentTimeMillis();
+		long endTime = System.currentTimeMillis();
+		lookupTime += (endTime - beginTime);
 		return "test value";
 	}
 	
 	
 	public String order(int itemNumber) {
+		long beginTime = System.currentTimeMillis();
+		long endTime = System.currentTimeMillis();
+		buyTime += (endTime - beginTime);
 		return "test value";
 	}
 	
@@ -52,6 +66,15 @@ public class Server implements Store{
 		return "test value";
 	}
 	
+
+/**
+ * Sets up all the books and related information in the bookstore
+ * 
+ * */
+	private void initBookStore() {
+		
+	}
+	
 	
 	/**
 	 * @param args
@@ -64,6 +87,9 @@ public class Server implements Store{
 			//Bind remote object's stub in the registry
 			Registry registry = LocateRegistry.getRegistry();
 			registry.rebind("Store", stub);
+			
+			//Initialize book "database"
+			obj.initBookStore();
 			
 			System.err.println("Server ready");
 		} catch (Exception e) {

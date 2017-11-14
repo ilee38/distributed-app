@@ -21,7 +21,7 @@ public class Client {
 	 */
 	public static void main(String[] args) {
 		
-		//Setting the host to null indicates the local host address should be used
+		//Setting the host to null indicates that the local host address should be used
 		String host = null;
 		try {
 			Registry registry = LocateRegistry.getRegistry(host);
