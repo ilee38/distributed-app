@@ -9,7 +9,7 @@ package mybooks;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-
+import java.util.*;
 
 public class Client {
 	
@@ -26,8 +26,33 @@ public class Client {
 		try {
 			Registry registry = LocateRegistry.getRegistry(host);
 			Store stub = (Store) registry.lookup("Store");
-			String searchResp = stub.search("Grad school");
-			System.out.println("response from server: " + searchResp);
+			
+			// *** Search *** //
+			ArrayList<Book> searchResp = stub.search("Graduate School");
+			if( searchResp != null) {
+				for(Book book : searchResp) {
+					System.out.println("Book title: " + book.bookTitle);
+					System.out.println("Item number: " + book.itemNumber);
+					System.out.println("---------------");
+				}
+			}else {
+				System.out.println("No results found under topic: ");
+			}
+			
+			// *** Lookup *** //
+			Book lookupBook = stub.lookup(2);
+			if(lookupBook != null) {
+				System.out.println("Qty in stock: " + lookupBook.stockQty);
+				System.out.println("Item cost: $" + lookupBook.bookCost);
+				System.out.println("Book topic: " + lookupBook.bookTopic);
+			}else {
+				System.out.println("Item number not found");
+			}
+			
+			// ** Order ** //
+			String orderMsg = stub.order(2);
+			System.out.println(orderMsg);
+			
 		} catch(Exception e) {
 			System.err.println("Client exception: " + e.toString());
 			e.printStackTrace();

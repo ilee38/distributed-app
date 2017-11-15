@@ -8,11 +8,12 @@ package mybooks;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.*;
 
 public interface Store extends Remote{
 	//Services methods
-	String search(String topic) throws RemoteException;
-	String lookup(int itemNumber) throws RemoteException;
+	ArrayList<Book> search(String topic) throws RemoteException;
+	Book lookup(int itemNumber) throws RemoteException;
 	String order(int itemNumber) throws RemoteException;
 	
 	//Reports methods

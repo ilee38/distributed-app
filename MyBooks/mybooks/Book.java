@@ -5,15 +5,18 @@ package mybooks;
  *
  * This class represents a book on the store
  */
-public class Book {
+import java.io.*;
+
+public class Book implements Serializable{
 	String bookTitle;
 	String bookTopic;
-	int bookCost;
+	double bookCost;
 	int itemNumber;
+	int stockQty;
 	
 	public Book() {}
 	
-	public Book(String title, String topic, int cost, int itemNum) {
+	public Book(String title, String topic, double cost, int itemNum) {
 		this.bookTitle = title;
 		this.bookTopic = topic;
 		this.bookCost = cost;
@@ -28,7 +31,7 @@ public class Book {
 		this.bookTopic = topic;
 	}
 	
-	public void setCost(int cost) {
+	public void setCost(double cost) {
 		this.bookCost = cost;
 	}
 	
@@ -36,7 +39,11 @@ public class Book {
 		this.itemNumber = num;
 	}
 	
-	public int getBookCost() {
+	public void setStockQty(int qty) {
+		this.stockQty = qty;
+	}
+	
+	public double getBookCost() {
 		return bookCost;
 	}
 	
@@ -50,5 +57,9 @@ public class Book {
 	
 	public int getBookItemNumber() {
 		return itemNumber;
+	}
+	
+	public int getStockQty() {
+		return stockQty;
 	}
 }

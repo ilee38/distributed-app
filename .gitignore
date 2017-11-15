@@ -1,2 +1,6 @@
 /.metadata/
 *.class
+.recommenders/
+MyBooks/.classpath
+MyBooks/.project
+MyBooks/.settings/
