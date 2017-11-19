@@ -5,7 +5,7 @@ package mybooks;
  * 
  * Server class, implements the interface Store. 
  * Also, creates and exports the remote objects, and 
- * it registers the remote objects with a Java RMI registry
+ * it registers the remote objects with the Java RMI registry
  */
 
 import java.rmi.registry.Registry;
@@ -16,10 +16,11 @@ import java.util.*;
 
 public class Server implements Store{
 	
-	private int searchCount = 0, lookupCount = 0, buyCount = 0;	//Counters
-	private int searchTime = 0, lookupTime = 0, buyTime = 0;		//Timers
+	private static final int INITIAL_STOCK_QTY = 5;		//initial stock quantity per book
+	
+	private int searchCount = 0, lookupCount = 0, orderCount = 0, failOrderCount = 0;	//Counters
+	private long searchTime, lookupTime, orderTime;		//Timers
 	private int itemID = 1;
-	private int initialQty = 50;		//initial stock quantity per book
 	private String topic1 = "Distributed Systems";
 	private String topic2 = "Graduate School";
 	//Two book maps, one for each book topic. The map associates the Book object with its stock quantity. 
@@ -34,26 +35,27 @@ public class Server implements Store{
  * search() method
  * */
 	public ArrayList<Book> search(String topic) {
-		long beginTime = System.currentTimeMillis();
+		long beginTime = System.nanoTime();
+		searchCount++;
 		responseList.clear();	//clear the list before each search
 		if(topic.equals(topic1)) {
 			for(Book book : top1.keySet()) {
 				responseList.add(book);
 			}
-			long endTime = System.currentTimeMillis();
-			searchTime += (int)(endTime - beginTime);
+			long endTime = System.nanoTime();
+			searchTime += (endTime - beginTime);
 			return responseList;
 		}else if (topic.equals(topic2)) {
 			for(Book book : top2.keySet()) {
 				responseList.add(book);
 			}
-			long endTime = System.currentTimeMillis();
-			searchTime += (int)(endTime - beginTime);
+			long endTime = System.nanoTime();
+			searchTime += (endTime - beginTime);
 			return responseList;
 		}
 		responseList = null;
-		long endTime = System.currentTimeMillis();
-		searchTime += (int)(endTime - beginTime);
+		long endTime = System.nanoTime();
+		searchTime += (endTime - beginTime);
 		return responseList;
 	}
 	
@@ -62,25 +64,26 @@ public class Server implements Store{
  * lookup() method
  * */
 	public Book lookup(int itemNumber) {
-		long beginTime = System.currentTimeMillis();
+		long beginTime = System.nanoTime();
+		lookupCount++;
 		for(Book book : top1.keySet()) {
 			if(book.itemNumber == itemNumber) {
 				book.setStockQty(top1.get(book));
-				long endTime = System.currentTimeMillis();
-				lookupTime += (int)(endTime - beginTime);
+				long endTime = System.nanoTime();
+				lookupTime += (endTime - beginTime);
 				return book;
 			}
 		}
 		for(Book book : top2.keySet()) {
 			if(book.itemNumber == itemNumber) {
 				book.setStockQty(top2.get(book));
-				long endTime = System.currentTimeMillis();
-				lookupTime += (int)(endTime - beginTime);
+				long endTime = System.nanoTime();
+				lookupTime += (endTime - beginTime);
 				return book;
 			}
 		}
-		long endTime = System.currentTimeMillis();
-		lookupTime += (int)(endTime - beginTime);
+		long endTime = System.nanoTime();
+		lookupTime += (endTime - beginTime);
 		Book book = null;
 		return book;
 	}
@@ -90,8 +93,10 @@ public class Server implements Store{
  * order() method
  * */
 	public String order(int itemNumber) {
-		long beginTime = System.currentTimeMillis();
+		long beginTime = System.nanoTime();
+		orderCount++;
 		Book book = lookup(itemNumber);
+		lookupCount--;	//decrease lookup counter, since the previous call to lookup() was not made by a Client
 		if(book != null) {
 			if(book.stockQty > 0) {
 				//update stock qty
@@ -100,39 +105,55 @@ public class Server implements Store{
 				}else {
 					top2.replace(book, book.stockQty - 1);
 				}
-				long endTime = System.currentTimeMillis();
-				buyTime += (int)(endTime - beginTime);
+				long endTime = System.nanoTime();
+				orderTime += (endTime - beginTime);
 				return "You have successfully ordered " + book.bookTitle;
 			}else {
-				long endTime = System.currentTimeMillis();
-				buyTime += (int)(endTime - beginTime);
+				long endTime = System.nanoTime();
+				orderTime += (endTime - beginTime);
+				failOrderCount++;
 				return "Item is out of stock";
 			}
 		}else {
-			long endTime = System.currentTimeMillis();
-			buyTime += (int)(endTime - beginTime);
+			long endTime = System.nanoTime();
+			orderTime += (endTime - beginTime);
+			failOrderCount++;
 			return "Item number not found";
 		}
 	}
 	
 	
 	public String reportRequestsNumber(String service) {
-		return "test value";
+		if(service.toLowerCase().equals("search")) { 
+			return "Total reuqests for service " + service + ": " + searchCount;
+		}else if(service.toLowerCase().equals("lookup")) {
+			return "Total reuqests for service " + service + ": " + lookupCount;
+		}else if(service.toLowerCase().equals("order")) {
+			return "Total reuqests for service " + service + ": " + orderCount;
+		}
+		return service + " is not an available service";
 	}
 	
 	
 	public String reportGoodOrders() {
-		return "test value";
+		return "Number of books sold successfully: " + (orderCount - failOrderCount);
 	}
 	
 	
 	public String reportFailedOrders() {
-		return "test value";
+		return "Number of failed orders: " + failOrderCount;
 	}
 	
 	
 	public String reportServicePerformance(String service) {
-		return "test value";
+		if(service.toLowerCase().equals("search")) { 
+			return "Average servicing time for " + service + ": " + ((searchTime/1000) / (long)searchCount) + " ms/request";
+		}else if(service.toLowerCase().equals("lookup")) {
+			return "Average servicing time for " + service + ": " + ((lookupTime/1000) / (long)lookupCount) + " ms/request";
+		}else if(service.toLowerCase().equals("order")) {
+			return "Average servicing time for " + service + ": " + ((orderTime/1000) / (long)orderCount) + " ms/request";
+		}
+		return service + "is not an available service";
 	}
 	
 
@@ -141,16 +162,16 @@ public class Server implements Store{
  * */
 	private void initBookStore() {
 		Book book_1 = new Book("How to be Good at CS5523", topic1, 75.99, itemID);
-		top1.put(book_1, initialQty);
+		top1.put(book_1, INITIAL_STOCK_QTY);
 		itemID += 1;
 		Book book_2 = new Book("RPCs and RMI in Distributed Systems", topic1, 89.99, itemID);
-		top1.put(book_2, initialQty);
+		top1.put(book_2, INITIAL_STOCK_QTY);
 		itemID += 1;
 		Book book_3 = new Book("Why Go to the Graduate School", topic2, 56.98, itemID);
-		top2.put(book_3, initialQty);
+		top2.put(book_3, INITIAL_STOCK_QTY);
 		itemID += 1;
 		Book book_4 = new Book("How to Survive the Graduate School", topic2, 93.85, itemID);
-		top2.put(book_4, initialQty);
+		top2.put(book_4, INITIAL_STOCK_QTY);
 		itemID += 1;
 		
 	}

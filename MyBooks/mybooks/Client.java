@@ -65,12 +65,77 @@ public class Client {
 /**
  * order() method
  * --------------
- * Return success / failed ordering result
+ * Returns success/failed ordering result
  * */
 	public void order(int itemNum, Store stub) {
 		try {
 			String orderMsg = stub.order(itemNum);
 			System.out.println(orderMsg);
+		}catch(Exception e) {
+			System.err.println("Client exception: " + e.toString());
+			e.printStackTrace();
+		}
+	}
+	
+
+/**
+ * reportRequestsNumber() method
+ * -----------------------------
+ * returns the number of requests on the specified service
+ * */
+	public void reportRequestsNumber(String service, Store stub) {
+		try {
+			String requestsReport = stub.reportRequestsNumber(service);
+			System.out.println(requestsReport);
+		}catch(Exception e) {
+			System.err.println("Client exception: " + e.toString());
+			e.printStackTrace();
+		}
+	}
+	
+
+/**
+ * reportGoodOrders() method
+ * -------------------------
+ * returns the number of books sold successfully
+ * */
+	public void reportGoodOrders(Store stub) {
+		try {
+			String ordersReport = stub.reportGoodOrders();
+			System.out.println(ordersReport);
+			
+		}catch(Exception e) {
+			System.err.println("Client exception: " + e.toString());
+			e.printStackTrace();
+		}
+	}
+	
+	
+/**
+ * reportFailedOrders() method
+ * ---------------------------
+ * returns the number of orders that failed
+ * */
+	public void reportFailedOrders(Store stub) {
+		try {
+			String failedOrders = stub.reportFailedOrders();
+			System.out.println(failedOrders);
+		}catch(Exception e) {
+			System.err.println("Client exception: " + e.toString());
+			e.printStackTrace();
+		}
+	}
+	
+	
+/**
+ * reportServicePerformance() method
+ * ---------------------------------
+ * returns the average performance of serving the specified service
+ * */
+	public void reportServicePerformance(String service, Store stub) {
+		try {
+			String performanceReport = stub.reportServicePerformance(service);
+			System.out.println(performanceReport);
 		}catch(Exception e) {
 			System.err.println("Client exception: " + e.toString());
 			e.printStackTrace();
@@ -90,14 +155,18 @@ public class Client {
 			Registry registry = LocateRegistry.getRegistry(host);
 			Store stub = (Store) registry.lookup("Store");
 			
-			clientApp.search("Graduate School", stub);
+			clientApp.search("Distributed Systems", stub);
 			clientApp.lookup(2, stub);
 			clientApp.order(2, stub);
+			
+			clientApp.reportRequestsNumber("search", stub);
+			clientApp.reportGoodOrders(stub);
+			clientApp.reportFailedOrders(stub);
+			clientApp.reportServicePerformance("order", stub);
+			
 		} catch(Exception e) {
 			System.err.println("Client exception: " + e.toString());
 			e.printStackTrace();
 		}
-
 	}
-
 }
