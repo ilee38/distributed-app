@@ -20,8 +20,8 @@ public class Server implements Store{
 	private int searchCount = 0, lookupCount = 0, orderCount = 0, failOrderCount = 0;	//Counters
 	private long searchTime, lookupTime, orderTime;		//Timers
 	private int itemID = 1;
-	private String topic1 = "Distributed Systems";
-	private String topic2 = "Graduate School";
+	private String topic1 = "distributed systems";
+	private String topic2 = "graduate school";
 	//Two book maps, one for each book topic. The map associates the Book object with its stock quantity. 
 	private Map<Book, Integer> top1 = new LinkedHashMap<Book, Integer>();
 	private Map<Book, Integer> top2 = new LinkedHashMap<Book, Integer>();
@@ -36,14 +36,14 @@ public class Server implements Store{
 		long beginTime = System.nanoTime();
 		searchCount++;
 		responseList.clear();	//clear the list before each search
-		if(topic.equals(topic1)) {
+		if(topic.toLowerCase().equals(topic1)) {
 			for(Book book : top1.keySet()) {
 				responseList.add(book);
 			}
 			long endTime = System.nanoTime();
 			searchTime += (endTime - beginTime);
 			return responseList;
-		}else if (topic.equals(topic2)) {
+		}else if (topic.toLowerCase().equals(topic2)) {
 			for(Book book : top2.keySet()) {
 				responseList.add(book);
 			}
