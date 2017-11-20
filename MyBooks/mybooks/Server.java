@@ -10,7 +10,6 @@ package mybooks;
 
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
@@ -30,11 +29,10 @@ public class Server implements Store{
 	
 	public Server() {}
 	
-
 /**
  * search() method
  * */
-	public ArrayList<Book> search(String topic) {
+	synchronized public ArrayList<Book> search(String topic) {
 		long beginTime = System.nanoTime();
 		searchCount++;
 		responseList.clear();	//clear the list before each search
@@ -63,7 +61,7 @@ public class Server implements Store{
 /**
  * lookup() method
  * */
-	public Book lookup(int itemNumber) {
+	synchronized public Book lookup(int itemNumber) {
 		long beginTime = System.nanoTime();
 		lookupCount++;
 		for(Book book : top1.keySet()) {
@@ -92,7 +90,7 @@ public class Server implements Store{
 /**
  * order() method
  * */
-	public String order(int itemNumber) {
+	synchronized public String order(int itemNumber) {
 		long beginTime = System.nanoTime();
 		orderCount++;
 		Book book = lookup(itemNumber);
@@ -123,7 +121,7 @@ public class Server implements Store{
 	}
 	
 	
-	public String reportRequestsNumber(String service) {
+	synchronized public String reportRequestsNumber(String service) {
 		if(service.toLowerCase().equals("search")) { 
 			return "Total reuqests for service " + service + ": " + searchCount;
 		}else if(service.toLowerCase().equals("lookup")) {
@@ -135,17 +133,17 @@ public class Server implements Store{
 	}
 	
 	
-	public String reportGoodOrders() {
+	synchronized public String reportGoodOrders() {
 		return "Number of books sold successfully: " + (orderCount - failOrderCount);
 	}
 	
 	
-	public String reportFailedOrders() {
+	synchronized public String reportFailedOrders() {
 		return "Number of failed orders: " + failOrderCount;
 	}
 	
 	
-	public String reportServicePerformance(String service) {
+	synchronized public String reportServicePerformance(String service) {
 		if(service.toLowerCase().equals("search")) { 
 			return "Average servicing time for " + service + ": " + ((searchTime/1000) / (long)searchCount) + " ms/request";
 		}else if(service.toLowerCase().equals("lookup")) {
@@ -188,7 +186,7 @@ public class Server implements Store{
 			//Bind remote object's stub in the registry
 			Registry registry = LocateRegistry.getRegistry();
 			registry.rebind("Store", stub);
-			
+	
 			//Initialize book "database"
 			obj.initBookStore();
 			
