@@ -1,20 +1,19 @@
+/**
+ * 
+ */
 package mybooks;
 
 /**
  * @author iramlee
- * 
- * Client class, obtains the stubs (proxy) on the server in order to make
- * method calls to the remote objects.
+ *
  */
-
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
-import java.io.*;
 
-public class Client{
+public class ClientTest1{
 	
-	private Client() {}
+	private ClientTest1() {}
 
 
 /**
@@ -23,11 +22,10 @@ public class Client{
  * Returns all books under the specified topic
  * */
 	public void search(String topic, Store stub) {
-		ArrayList<Book> searchResp = new ArrayList<Book>();
 		try {
-			searchResp = stub.search(topic);
+			ArrayList<Book> searchResp = stub.search(topic);
 			if( searchResp != null) {
-			 	for(Book book : searchResp) {
+				for(Book book : searchResp) {
 					System.out.println("Book title: " + book.bookTitle);
 					System.out.println("Item number: " + book.itemNumber);
 					System.out.println("---------------");
@@ -151,19 +149,6 @@ public class Client{
 		}
 	}
 	
-	
-	private void displayMenu() {
-		System.out.println("Select service number from the list: ");
-		System.out.println("1: Search");
-		System.out.println("2: Lookup");
-		System.out.println("3: Order");
-		System.out.println("4: Report Requests Number");
-		System.out.println("5: Report Good Orders");
-		System.out.println("6: Report Failed Orders");
-		System.out.println("7: Report Service Performance");
-		System.out.println("8: Exit program");
-	}
-	
 	/**
 	 * @param args
 	 */
@@ -171,62 +156,90 @@ public class Client{
 		
 		//Setting the host to null indicates that the local host address should be used
 		String host = null;
-		Client clientApp = new Client();
-		BufferedReader strReader = new BufferedReader(new InputStreamReader(System.in));
-		Scanner intReader = new Scanner(System.in);
-		boolean exit = false;
+		ClientTest1 clientApp = new ClientTest1();
 		
 		try {
 			Registry registry = LocateRegistry.getRegistry(host);
 			Store stub = (Store) registry.lookup("Store");
 			
-			while( exit == false) {
-				clientApp.displayMenu();
-				int selectedService = intReader.nextInt();
-				switch(selectedService) {
-					case 1:
-						System.out.println("for Search, specifiy topic: distributed systems or graduate school");
-						String searchTopic = strReader.readLine().toLowerCase();
-						clientApp.search(searchTopic, stub);
-						break;
-					case 2:
-						System.out.println("for Lookup, specifiy item number (1 to 4)");
-						int itemNum = intReader.nextInt();
-						clientApp.lookup(itemNum, stub);
-						break;
-					case 3:
-						System.out.println("for Order, specifiy item number (1 to 4)");
-						int itemNbr = intReader.nextInt();
-						clientApp.order(itemNbr, stub);
-						break;
-					case 4:
-						System.out.println("for Requests Number report, specifiy one service: search, lookup, order");
-						String serviceReport = strReader.readLine().toLowerCase();
-						clientApp.reportRequestsNumber(serviceReport, stub);
-						break;
-					case 5: 
-						clientApp.reportGoodOrders(stub);
-						break;
-					case 6:
-						clientApp.reportFailedOrders(stub);
-						break;
-					case 7:
-						System.out.println("for Service Performance report, specifiy one service: search, lookup, order");
-						String perfReport = strReader.readLine().toLowerCase();
-						clientApp.reportServicePerformance(perfReport, stub);
-						break;
-					case 8:
-						exit = true;
-						break;
-					default:
-						System.out.println("Incorrect entry.");
-						break;
-				}
+			//*** TEST search() method ***//
+			System.out.println("*** TESTING search() SERVICE ***");
+			System.out.println("Searching for: distributed systems");
+			clientApp.search("distributed systems", stub);
+			System.out.println("Searching for: graduate school");
+			clientApp.search("graduate school", stub);
+			System.out.println("Searching for: computer science");
+			clientApp.search("computer science", stub);
+			System.out.println("********************************");
+			
+			//*** TEST lookup() method ***//
+			System.out.println("*** TESTING lookup() SERVICE ***");
+			System.out.println("Looking up item number: 1");
+			clientApp.lookup(1, stub);
+			System.out.println("Looking up item number: 2");
+			clientApp.lookup(2, stub);
+			System.out.println("Looking up item number: 3");
+			clientApp.lookup(3, stub);
+			System.out.println("Looking up item number: 4");
+			clientApp.lookup(4, stub);
+			System.out.println("Looking up item number: 6");
+			clientApp.lookup(6, stub);
+			System.out.println("********************************");
+			
+			//*** TEST order method ***//
+			System.out.println("*** TESTING order() SERVICE ***");
+			System.out.println("Ordering item number: 1");
+			clientApp.order(1, stub);
+			System.out.println("Ordering item number: 2");
+			clientApp.order(2, stub);
+			System.out.println("Ordering item number: 3");
+			clientApp.order(3, stub);
+			System.out.println("Ordering item number: 4");
+			clientApp.order(4, stub);
+			System.out.println("Ordering item number: 6");
+			clientApp.order(6, stub);
+			for(int i = 0; i < 5; i++) {
+				System.out.println("Ordering item number: 2");
+				clientApp.order(2, stub);
 			}
+			System.out.println("Looking up item number: 2");
+			clientApp.lookup(2, stub);
+			System.out.println("********************************");
+			
+			//*** TEST reportRequestsNumber() method ***//
+			System.out.println("*** TESTING reportRequestsNumber() ***");
+			System.out.println("Reporting requests for: search");
+			clientApp.reportRequestsNumber("search", stub);
+			System.out.println("Reporting requests for: lookup");
+			clientApp.reportRequestsNumber("lookup", stub);
+			System.out.println("Reporting requests for: order");
+			clientApp.reportRequestsNumber("order", stub);
+			System.out.println("********************************");
+			
+			//*** TEST reportGoodOrders() method ***//
+			System.out.println("*** TESTING reportGoodOrders() ***");
+			clientApp.reportGoodOrders(stub);
+			System.out.println("********************************");
+			
+			//*** TEST reportFailedOrders() method ***//
+			System.out.println("*** TESTING reportFailedOrders() ***");
+			clientApp.reportFailedOrders(stub);
+			System.out.println("********************************");
+			
+			//*** TEST reportServicePerformance() method ***//
+			System.out.println("*** TESTING reportServicePerformance() ***");
+			System.out.println("Reporting service performance for: search");
+			clientApp.reportServicePerformance("search", stub);
+			System.out.println("Reporting service performance for: lookup");
+			clientApp.reportServicePerformance("lookup", stub);
+			System.out.println("Reporting service performance for: order");
+			clientApp.reportServicePerformance("order", stub);
+			System.out.println("********************************");
+			
 		} catch(Exception e) {
 			System.err.println("Client exception: " + e.toString());
 			e.printStackTrace();
 		}
-		intReader.close();	
 	}
 }
+

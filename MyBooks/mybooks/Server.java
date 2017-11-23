@@ -29,6 +29,14 @@ public class Server implements Store{
 	
 	public Server() {}
 	
+/* Function for future use to convert response to JSON	
+	synchronized private String createJson(ArrayList<Book> bookList) {
+		Gson gson = new Gson();
+		String json = gson.toJson(bookList);
+		System.out.println(json);
+		return json;
+	} */
+	
 /**
  * search() method
  * */
@@ -42,6 +50,7 @@ public class Server implements Store{
 			}
 			long endTime = System.nanoTime();
 			searchTime += (endTime - beginTime);
+			//String response = createJson(responseList);
 			return responseList;
 		}else if (topic.toLowerCase().equals(topic2)) {
 			for(Book book : top2.keySet()) {
@@ -49,12 +58,13 @@ public class Server implements Store{
 			}
 			long endTime = System.nanoTime();
 			searchTime += (endTime - beginTime);
+			//String response = createJson(responseList);
 			return responseList;
 		}
 		responseList = null;
 		long endTime = System.nanoTime();
 		searchTime += (endTime - beginTime);
-		return responseList;
+		return null;
 	}
 	
 	
