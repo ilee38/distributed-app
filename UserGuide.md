@@ -32,8 +32,9 @@
 <h4>Test Cases</h4>
 
 Two test cases were created to test the program's functionality, ClientTest1.java and ClientTest2B.java. 
-	-The first test case verifies the program's basic functionality using a single Client. It checks that it can call all the remote methods in the Server, and that correct book keeping is maintained by the Server, i.e. that stock quantities are updated and service reports are correct. The test results show correct functionality. 
+
+The first test case verifies the program's basic functionality using a single Client. It checks that it can call all the remote methods in the Server, and that correct book keeping is maintained by the Server, i.e. that stock quantities are updated and service reports are correct. The test results show correct functionality. 
 	
-	- The second test case simulates multiple Client requests by creating 2 threads and having them both order the same book. This process wis repeated 30 times in a loop. ClientTest2B.java makes use of class file ClientTest2A.java, which is the Client program, but it implements Java's Runnable interface. This means that the Client can be assigned to as many threads as we choose, and then executed. ClientTest2B.java is the driver that creates and executes the threads. Since the threads are created on the Client's side, they are executed in random order, however running the test shows that there is no deadlock on the Server side.
+The second test case simulates multiple Client requests by creating 2 threads and having them both order the same book. This process wis repeated 30 times in a loop. ClientTest2B.java makes use of class file ClientTest2A.java, which is the Client program, but it implements Java's Runnable interface. This means that the Client can be assigned to as many threads as we choose, and then executed. ClientTest2B.java is the driver that creates and executes the threads. Since the threads are created on the Client's side, they are executed in random order, however running the test shows that there is no deadlock on the Server side.
 
 Note: to run test cases follow the same procedure as above, but use the Client files under the test folder. Once all files are compiled, two shell scripts are provided to run the tests: test1.sh and test2.sh
